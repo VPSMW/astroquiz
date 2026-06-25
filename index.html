@@ -3,41 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AstroQuiz: Space Exploration</title>
+    <title>AstroQuiz PRO: Space Journey</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="theme-space-black">
     <div class="stars"></div>
     <div class="app-container">
+        
+        <!-- Top Bar For Coins and Themes -->
+        <div class="top-nav-bar">
+            <div class="coin-container">🪙 <span id="user-coins">100</span></div>
+            <select id="theme-selector" onchange="changeTheme(this.value)">
+                <option value="theme-space-black">🌌 स्पेस ब्लैक</option>
+                <option value="theme-nebula-purple">🍇 नेब्युला पर्पल</option>
+                <option value="theme-mars-red">🔴 मार्स रेड</option>
+            </select>
+        </div>
+
         <!-- Home Screen -->
         <div id="home-screen" class="screen active">
-            <h1 class="logo">🚀 AstroQuiz</h1>
+            <h1 class="logo">🚀 AstroQuiz PRO</h1>
             <p class="subtitle">ब्रह्मांड के रहस्यों को अनलॉक करें</p>
             
-            <div class="levels-container">
-                <button class="level-btn" onclick="startQuiz('moon')">🌕 लेवल 1: मून मिशन (Free)</button>
-                <button class="level-btn" onclick="startQuiz('mars')">🔴 लेवल 2: मार्स मिशन (Free)</button>
-                <button class="level-btn locked" onclick="showLockedMessage()">🌌 लेवल 3: ब्लैक होल (Locked)</button>
+            <div class="menu-tabs">
+                <button class="tab-btn active" onclick="switchTab('levels')">🎮 खेलें</button>
+                <button class="tab-btn" onclick="switchTab('facts')">📖 डेली फैक्ट्स</button>
+                <button class="tab-btn" onclick="switchTab('leaderboard')">🏆 लीडरबोर्ड</button>
+            </div>
+
+            <!-- Tab Content: Levels -->
+            <div id="levels-tab" class="tab-content active">
+                <div class="levels-scroll" id="levels-list">
+                    <!-- Levels dynamically loaded by JS -->
+                </div>
+            </div>
+
+            <!-- Tab Content: Daily Facts -->
+            <div id="facts-tab" class="tab-content">
+                <div class="facts-container" id="facts-list">
+                    <!-- Facts dynamically loaded by JS -->
+                </div>
+            </div>
+
+            <!-- Tab Content: Leaderboard -->
+            <div id="leaderboard-tab" class="tab-content">
+                <div class="leaderboard-container">
+                    <h3>🏆 टॉप स्पेस चैंपियंस</h3>
+                    <div class="leader-item"><span>1. अमित (Expert)</span><span>950 Pts</span></div>
+                    <div class="leader-item"><span>2. आप (Current)</span><span id="lb-current-score">0 Pts</span></div>
+                    <div class="leader-item"><span>3. राहुल (Explorer)</span><span>420 Pts</span></div>
+                </div>
             </div>
             
-            <p class="footer-text">Made with ❤️ for Space Lovers</p>
+            <button id="pwa-install-btn" class="install-btn hidden">📥 ऐप इंस्टॉल करें (Install App)</button>
         </div>
 
         <!-- Quiz Screen -->
         <div id="quiz-screen" class="screen">
             <div class="quiz-header">
                 <span id="quiz-title">लेवल</span>
-                <span id="score-display">स्कोर: 0</span>
+                <div class="timer-box">⏱️ <span id="timer-display">20</span>s</div>
             </div>
             
             <div class="progress-bar"><div id="progress"></div></div>
+
+            <!-- Lifelines Container -->
+            <div class="lifeline-container">
+                <button id="ll-fifty" class="ll-btn" onclick="useFiftyFifty()">🌓 50-50</button>
+                <button id="ll-skip" class="ll-btn" onclick="useSkipQuestion()">⏭️ स्किप</button>
+                <button id="ll-time" class="ll-btn" onclick="useTimeExtender()">⏳ +10s</button>
+            </div>
 
             <div class="question-box">
                 <p id="question-text">सवाल यहाँ दिखाई देगा...</p>
             </div>
 
             <div id="options-container" class="options-grid">
-                <!-- Buttons will be injected by JavaScript -->
+                <!-- Option buttons injected by JS -->
             </div>
 
             <div id="fact-box" class="fact-box hidden">
@@ -48,17 +90,21 @@
 
         <!-- Score Screen -->
         <div id="score-screen" class="screen">
-            <h2>🎯 क्विज पूरा हुआ!</h2>
-            <div class="final-score-card">
-                <p>आपका कुल स्कोर</p>
-                <h1 id="final-score">0/5</h1>
+            <h2>🎯 मिशन पूरा हुआ!</h2>
+            <div class="final-score-card" id="share-card">
+                <h3>🚀 AstroQuiz Achievement</h3>
+                <p>मेरा कुल स्कोर</p>
+                <h1 id="final-score">0 Pts</h1>
+                <p id="earned-coins-text">🪙 +0 कॉइन्स कमाए</p>
             </div>
             <p id="score-message"></p>
-            <button class="home-btn" onclick="goToHome()">मुख्य स्क्रीन पर जाएं 🏠</button>
+            <div class="score-actions">
+                <button class="share-btn" onclick="shareScore()">📲 दोस्तों को शेयर करें</button>
+                <button class="home-btn" onclick="goToHome()">मुख्य स्क्रीन 🏠</button>
+            </div>
         </div>
     </div>
 
     <script src="script.js"></script>
 </body>
 </html>
-
