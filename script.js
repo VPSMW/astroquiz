@@ -224,3 +224,4 @@ function useFiftyFifty() {
     
     const currentQ = quizData[currentLevelKey].qList[currentQIndex];
          
+document.getElementById('pwa-install-btn');window.addEventListener('beforeinstallprompt', (e) => {e.preventDefault();deferredPrompt = e;btn.classList.remove('hidden');});btn.addEventListener('click', () => {if (deferredPrompt) {deferredPrompt.prompt();deferredPrompt.userChoice.then(() => { btn.classList.add('hidden'); });}});}
