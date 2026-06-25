@@ -1,4 +1,4 @@
-// 10 लेवल्स और उनका पूरा डाटाबेस
+// 10 लेवल्स और उनका पूरा डेटाबेस
 const quizData = {
     l1: { name: "🌕 मून मिशन (Level 1)", cost: 0, qList: [
         { q: "चंद्रयान-3 की सफल लैंडिंग चाँद के किस हिस्से पर हुई थी?", options: ["उत्तरी ध्रुव", "दक्षिणी ध्रुव", "भूमध्य रेखा", "बैक साइड"], answer: 1, fact: "चंद्रयान-3 चाँद के दक्षिणी ध्रुव (South Pole) पर उतरने वाला दुनिया का पहला अंतरिक्ष यान बना।" }
@@ -7,7 +7,7 @@ const quizData = {
         { q: "नासा के किस रोवर ने मंगल ग्रह पर पानी के सबूत खोजे थे?", options: ["क्युरियोसिटी", "पर्सिवियरेंस", "अपॉर्चुनिटी", "सभी ने"], answer: 3, fact: "नासा के इन सभी रोवर्स ने अलग-अलग समय पर मंगल पर प्राचीन झीलों और पानी के बहाव के निशान खोजे हैं।" }
     ]},
     l3: { name: "🌌 ब्लैक होल रहस्य (Level 3)", cost: 30, qList: [
-        { q: "ब्लैक होल के चारों ओर की उस सीमा को क्या कहते हैं जिससे प्रकाश भी बाहर नहीं आ सकता?", options: ["इवेंट होराइजन", "सिंगुलैरिटी", "डार्क जोन", "एस्ट्रो रिंग"], answer: 0, fact: "इवेंट होराइजन (Event Horizon) ब्लैक होल की अंतिम सीमा होती है, इसे पार करने के बाद वापसी असंभव है।" }
+        { q: "ब्लैक होल के चारों ओर की उस सीमा को क्या कहते हैं जिससे प्रकाश भी बाहर नहीं आ सकता?", options: ["इवेंट होराइजन", "सिंगुलैरिटी", "डार्क जोन", "एस्ट्रोリング"], answer: 0, fact: "इवेंट होराइजन (Event Horizon) ब्लैक होल की अंतिम सीमा होती है, इसे पार करने के बाद वापसी असंभव है।" }
     ]},
     l4: { name: "☀️ आदित्य-L1 सूर्य मिशन (Level 4)", cost: 40, qList: [
         { q: "आदित्य-L1 को पृथ्वी से कितनी दूर 'L1' बिंदु पर स्थापित किया गया है?", options: ["10 लाख किमी", "15 लाख किमी", "50 लाख किमी", "1 करोड़ किमी"], answer: 1, fact: "यह बिंदु पृथ्वी और सूर्य की कुल दूरी का केवल 1% है, जो लगभग 15 लाख किलोमीटर दूर है।" }
@@ -56,12 +56,14 @@ window.onload = function() {
 };
 
 function updateCoinsDisplay() {
-    document.getElementById('user-coins').innerText = coins;
+    const coinEl = document.getElementById('user-coins');
+    if(coinEl) coinEl.innerText = coins;
     localStorage.setItem('astro_coins', coins);
 }
 
 function loadLevels() {
     const list = document.getElementById('levels-list');
+    if(!list) return;
     list.innerHTML = '';
     Object.keys(quizData).forEach(key => {
         const lvl = quizData[key];
@@ -70,8 +72,8 @@ function loadLevels() {
         const card = document.createElement('div');
         card.className = `level-card ${isLocked ? 'locked' : ''}`;
         card.innerHTML = `
-            <div>
-                <h4>${lvl.name}</h4>
+            <div style="text-align: left;">
+                <h4 style="margin-bottom:4px;">${lvl.name}</h4>
                 <small>${isLocked ? `🔓 खोलने के लिए: 🪙 ${lvl.cost}` : '✅ खेलने के लिए तैयार'}</small>
             </div>
             <span>${isLocked ? '🔒' : '▶️'}</span>
@@ -109,7 +111,6 @@ function startQuiz(key) {
     document.getElementById('quiz-screen').classList.add('active');
     document.getElementById('quiz-title').innerText = quizData[key].name;
     
-    // Reset Lifelines UI
     document.querySelectorAll('.ll-btn').forEach(b => b.classList.remove('used'));
     
     showQuestion();
@@ -122,7 +123,6 @@ function showQuestion() {
     const qList = quizData[currentLevelKey].qList;
     const currentQ = qList[currentQIndex];
     
-    // Progress Bar
     document.getElementById('progress').style.width = `${((currentQIndex) / qList.length) * 100}%`;
     document.getElementById('question-text').innerText = `${currentQIndex + 1}. ${currentQ.q}`;
     
@@ -166,11 +166,11 @@ function checkAnswer(selectedIdx, btn) {
     if (selectedIdx === currentQ.answer) {
         btn.classList.add('correct');
         levelScore += 10;
-        triggerVibration(60); // Quick positive vibration
+        triggerVibration(60);
     } else {
         btn.classList.add('wrong');
-        btns[currentQ.answer].classList.add('correct');
-        triggerVibration([100, 50, 100]); // Negative vibration pattern
+        if(btns[currentQ.answer]) btns[currentQ.answer].classList.add('correct');
+        triggerVibration(200);
     }
     
     document.getElementById('fact-text').innerText = currentQ.fact;
@@ -204,7 +204,6 @@ function endQuiz() {
     
     document.getElementById('final-score').innerText = `${levelScore} Pts`;
     
-    // Reward coins based on score
     const earnedCoins = levelScore / 2;
     coins += earnedCoins;
     updateCoinsDisplay();
@@ -212,16 +211,18 @@ function endQuiz() {
     document.getElementById('earned-coins-text').innerText = `🪙 +${earnedCoins} कॉइन्स कमाए`;
     document.getElementById('score-message').innerText = levelScore > 0 ? "🚀 मिशन सफलतापूर्वक संपन्न हुआ!" : "👨‍🚀 कोई बात नहीं, दोबारा प्रयास करें!";
     
-    // Update local leaderboard tracker
     let currentTotal = parseInt(document.getElementById('lb-current-score').innerText) || 0;
     document.getElementById('lb-current-score').innerText = `${currentTotal + levelScore} Pts`;
 }
 
-// 3 Lifelines Implementations
 function useFiftyFifty() {
     if (isAnswered || document.getElementById('ll-fifty').classList.contains('used')) return;
     document.getElementById('ll-fifty').classList.add('used');
     
     const currentQ = quizData[currentLevelKey].qList[currentQIndex];
-         
-document.getElementById('pwa-install-btn');window.addEventListener('beforeinstallprompt', (e) => {e.preventDefault();deferredPrompt = e;btn.classList.remove('hidden');});btn.addEventListener('click', () => {if (deferredPrompt) {deferredPrompt.prompt();deferredPrompt.userChoice.then(() => { btn.classList.add('hidden'); });}});}
+    const btns = document.getElementsByClassName('option-btn');
+    let removed = 0;
+    
+    for(let i=0; i<btns.length; i++) {
+        if(i !== currentQ.answer && removed < 2) {
+                    deferredPrompt = e;btn.classList.remove('hidden');});btn.addEventListener('click', () => {if (deferredPrompt) {deferredPrompt.prompt();deferredPrompt.userChoice.then(() => { btn.classList.add('hidden'); });}});}
